@@ -14,7 +14,7 @@ class ButtonPanel extends JPanel {//класс отвечающий за фре�
     private JTextField textField = new JTextField(6);
     private List<String> words;
     private int i = 0;
-    private int speed=300;
+    private int speed=250;
 
     public void setSpeed(int speed) {
         this.speed = speed;
@@ -25,11 +25,13 @@ class ButtonPanel extends JPanel {//класс отвечающий за фре�
     }
 
     public ButtonPanel(){ //конструктор панели
+        this.setLayout(new BorderLayout());
         Font bigFont = new Font("SansSerif", Font.BOLD, 40);
         textField.setFont(bigFont);
+
         textField.setHorizontalAlignment(JTextField.CENTER);
         textField.setPreferredSize(new Dimension(400,100));
-        add(textField);
+        this.add(textField, BorderLayout.CENTER);
         try {
             File file = new File("try.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "Cp1251"));
@@ -50,16 +52,15 @@ class ButtonPanel extends JPanel {//класс отвечающий за фре�
             if (i > words.size()-1){
                 return;
             }
-
             textField.setText(words.get(i));
             i++;
         };
         Timer timer = new Timer(getDelay(), actionRevoltWords);
         JButton goButton=new JButton("GO!");//создаем кнопку
-        //add(goButton);//добавляем кнопки на панель
-        timer.start();
-        goButton.addActionListener((e) -> {
+        this.add(goButton, BorderLayout.SOUTH);//добавляем кнопки на панель
 
+        goButton.addActionListener((e) -> {
+                timer.start();
             });
 
     }
