@@ -6,9 +6,9 @@ import java.awt.*;
  * Created by Feraijo on 25.10.2016.
  */
 
-class TextField extends JTextField {
+public class TextField extends JTextField {
 
-    TextField() {
+    public TextField() {
         Font bigFont = new Font("SansSerif", Font.BOLD, 40);
         setFont(bigFont);
         setHorizontalAlignment(JTextField.CENTER);

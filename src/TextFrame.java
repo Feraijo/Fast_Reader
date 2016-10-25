@@ -23,4 +23,7 @@ class TextFrame extends JFrame {
         JFrame frame = new TextFrame();
         frame.setVisible(true);
     }
+    private void getStripes(){
+
+    }
 }

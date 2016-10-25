@@ -14,7 +14,7 @@ class TextPanel extends JPanel {
         TextField textField = new TextField();
         add(textField, BorderLayout.CENTER);
 
-        GoButton goButton = new GoButton("GO!", textField);
+        GoButton goButton = new GoButton(textField);
         add(goButton, BorderLayout.SOUTH);
     }
 }

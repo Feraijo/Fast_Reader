@@ -8,11 +8,11 @@ import java.util.List;
  * Created by Feraijo on 25.10.2016.
  */
 
-class Reader {
+public class Reader {
     private List<String> words;
     private int speed = 250;
 
-    Reader(){
+    public Reader(){
         File file = new File("try.txt");
         try (BufferedReader reader = new BufferedReader
                 (new InputStreamReader(new FileInputStream(file), "Cp1251"))){

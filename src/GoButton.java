@@ -9,9 +9,10 @@ import java.awt.event.ActionListener;
 class GoButton extends JButton{
     private Reader rdr = new Reader();
     private int i = 0;
+    boolean on = false;
 
-    GoButton(String text, TextField textField) {
-        super(text);
+    GoButton(TextField textField) {
+        setText("Play");
         ActionListener readTextAction = (e) -> {
             if (i > rdr.getWords().size() - 1) {
                 return;
@@ -20,7 +21,15 @@ class GoButton extends JButton{
             i++;
         };
         Timer timer = new Timer(rdr.getDelay(), readTextAction);
-        addActionListener((e)->
-                timer.start());
+        addActionListener((e)->{
+            if (!on) {
+                timer.start();
+                setText("Pause");
+                on = true;
+            } else {
+                timer.stop();
+                setText("Play");
+                on = false;
+            }});
     }
 }
