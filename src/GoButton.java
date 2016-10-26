@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,10 +9,10 @@ import java.util.List;
 
 class GoButton extends JButton {
     private Reader rdr = new Reader();
-    private int mainCount = 0, bigWordSize = 0, bwCount = 1;
-    private boolean wordIsBig = false, isPause = false;
+    private int mainCount = 0;
+    private boolean isPause = false;
 
-    private List<String> words = rdr.getWords(), bigWord;
+    private List<String> words = rdr.getWords();
     private int wordsSize = rdr.getWords().size();
 
     GoButton(TextField textField) {
@@ -21,27 +20,9 @@ class GoButton extends JButton {
         ActionListener readTextAction = (e) -> {
             if (mainCount > wordsSize - 1)
                 return;
-            String wordToShow = words.get(mainCount);
-            if (wordIsBig) {
-                textField.setText(bigWord.get(bwCount++));
-                if (bwCount == bigWordSize) {
-                    wordIsBig = false;
-                    bigWord = new LinkedList<>();
-                    bwCount = 1;
-                    mainCount++;
-                }
-            } else {
-                if ((float) wordToShow.length() / 6 >= 2f) {
-                    bigWord = new LinkedList<>();
-                    readWords(wordToShow);
-                    textField.setText(bigWord.get(0));
-                    wordIsBig = true;
-                } else {
-                    textField.setText(wordToShow);
-                    mainCount++;
-                }
-            }
+            textField.setText(words.get(mainCount++));
         };
+
         Timer timer = new Timer(rdr.getDelay(), readTextAction);
         addActionListener((e) -> {
             if (!isPause) {
@@ -55,18 +36,10 @@ class GoButton extends JButton {
             }
         });
     }
-
-    private void readWords(String word) {
-        if ((float) word.length() / 6 >= 2f) {
-            bigWord.add(word.substring(0, 6).concat("-"));
-            readWords(("-").concat(word.substring(6)));
-        } else {
-            bigWord.add(word);
-            bigWordSize = bigWord.size();
-        }
-    }
 }
 
 /*
+
+
 
  */
