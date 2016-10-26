@@ -17,4 +17,5 @@ class TextPanel extends JPanel {
         GoButton goButton = new GoButton(textField);
         add(goButton, BorderLayout.SOUTH);
     }
+
 }

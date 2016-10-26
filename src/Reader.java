@@ -21,9 +21,7 @@ public class Reader {
             String line;
             while ((line = reader.readLine()) != null) {
                 text.add(line);
-                for (String s : text) {
-                    words.addAll(Arrays.asList(s.split(" ")));
-                }
+                words.addAll(Arrays.asList(line.split(" ")));
             }
         } catch(IOException e){
             e.printStackTrace();
