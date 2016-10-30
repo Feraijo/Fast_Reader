@@ -1,21 +1,98 @@
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Класс, отвечающий за окно
  * Created by Feraijo on 24.10.2016.
  */
 
-class TextPanel extends JPanel {
+class TextPanel extends JPanel implements ActionListener {
+    private JFileChooser fc;
+    private JButton goButton;
+    private JButton selectFile;
+    private JComboBox<Integer> speedList;
+    private JTextField textField;
+
+    private Reader rdr = Reader.getInstance();
+    private boolean isPause = false;
+    private final Timer timer = new Timer(rdr.getDelay(), getAction());
+    private int mainCount = 0;
+    private List<String> words;
 
     TextPanel(){
         setLayout(new BorderLayout());
+        fc = new JFileChooser();
 
-        TextField textField = new TextField();
+        Integer[] speedVariants = {150,200,250,300,350,400,450,500,550,600,650,700};
+        speedList = new JComboBox<>(speedVariants);
+        speedList.setSelectedIndex(3);
+        speedList.addActionListener(this);
+
+        textField = new JTextField();
+        Font bigFont = new Font("SansSerif", Font.BOLD, 40);
+        textField.setFont(bigFont);
+        textField.setEditable(false);
+        textField.setHorizontalAlignment(JTextField.CENTER);
+        textField.setPreferredSize(new Dimension(400, 100));
+
+        goButton = new JButton("Play");
+        goButton.addActionListener(this);
+        selectFile = new JButton("Select file");
+        selectFile.addActionListener(this);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(speedList);
+        buttonPanel.add(selectFile);
+        buttonPanel.add(goButton);
+
         add(textField, BorderLayout.CENTER);
-
-        GoButton goButton = new GoButton(textField);
-        add(goButton, BorderLayout.SOUTH);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == selectFile ) {//Выбор файла при нажатии кнопки выбора
+            int returnVal = fc.showOpenDialog(TextPanel.this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                rdr.setFile(fc.getSelectedFile());
+            }
+            words = rdr.getWords();
+        } else if(e.getSource() == goButton) { //Начало чтения выбранного файла при нажатии кнопки Play
+            //Таймер, выполняющий действие через определённую задержку
+            if (!isPause) {
+                timer.start();
+                goButton.setText("Pause");
+                isPause = true;
+            } else {
+                timer.stop();
+                goButton.setText("Play");
+                isPause = false;
+            }
+        } else if (e.getSource() == speedList){
+            rdr.setSpeed(speedList.getItemAt(speedList.getSelectedIndex()));
+        }
+    }
+    private void setCurrentDelay (String word){ //метод для динамического регулирования задержки при знаках препинания
+        if (word.isEmpty())
+            return;
+        if (word.contains(",") || word.contains(":"))
+            timer.setDelay((int)(rdr.getDelay()*1.45));
+        if (word.contains(".") ||word.contains("!") || word.contains("?") || word.contains(";"))
+            timer.setDelay((int)(rdr.getDelay()*1.8));
+    }
+    private ActionListener getAction(){
+        return (event) -> {
+            timer.setDelay(rdr.getDelay());
+            if (mainCount > words.size() - 1)//Проверка на конец читаемого файла
+                return;
+            if (!(mainCount+1>=words.size()))
+                setCurrentDelay(words.get(mainCount+1));
+            textField.setText(words.get(mainCount++));
+        };
+    }
 }

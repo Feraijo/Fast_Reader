@@ -9,33 +9,37 @@ import java.util.regex.Pattern;
  * Created by Feraijo on 25.10.2016.
  */
 
-public class Reader {
+class Reader {
+    private static Reader instance;
     private List<String> words;
     private int speed = 300;
     private File file;
-    private int count, length;
+    private int count;
     private String[] lines;
 
-    public Reader(){
-        setFile("try.txt"); //Заглушка для выбора файла для чтения.
+    static Reader getInstance(){
+        if (instance == null)
+            instance = new Reader();
+        return instance;
+    }
+
+    List<String> getWords(){
+        //setFile(new File("try.txt"));//
         try (BufferedReader reader = new BufferedReader
                 (new InputStreamReader(new FileInputStream(file), "Cp1251"))){
             words = new ArrayList<>();
             String line;
             while ((line = reader.readLine()) != null) {
                 lines = line.split(" ");
-                length = lines.length;
-                for (count = 0; count < length; count++){
+                for (count = 0; count < lines.length; count++){
                     writeWords(lines[count]);
                 }
             }
+            return words;
         } catch(IOException e){
             e.printStackTrace();
+            return null;
         }
-    }
-
-    List<String> getWords(){
-        return words;
     }
 
     int getDelay(){
@@ -64,42 +68,11 @@ public class Reader {
         this.speed = speed;
     }
 
-    public void setFile(String name) {
-        this.file = new File(name);
+    public void setFile(File file) {
+        this.file = file;
     }
 }
 
 /*
-переносы в гоБуттон
-        if (mainCount > wordsSize - 1)
-                return;
-            String wordToShow = words.get(mainCount);
-            if (wordIsBig) {
-                textField.setText(bigWord.get(bwCount++));
-                if (bwCount == bigWordSize) {
-                    wordIsBig = false;
-                    bigWord = new LinkedList<>();
-                    bwCount = 1;
-                    mainCount++;
-                }
-            } else {
-                if ((float) wordToShow.length() / 6 >= 2f) {
-                    bigWord = new LinkedList<>();
-                    readWords(wordToShow);
-                    textField.setText(bigWord.get(0));
-                    wordIsBig = true;
-                } else {
-                    textField.setText(wordToShow);
-                    mainCount++;
-                }
-            }
-private void readWords(String word) {
-        if ((float) word.length() / 6 >= 2f) {
-            bigWord.add(word.substring(0, 6).concat("-"));
-            readWords(("-").concat(word.substring(6)));
-        } else {
-            bigWord.add(word);
-            bigWordSize = bigWord.size();
-        }
-    }
+
  */
