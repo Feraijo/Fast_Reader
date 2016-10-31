@@ -51,8 +51,8 @@ class Reader {
     private void writeWords(String word) {
         Pattern p = Pattern.compile("\\p{Punct}+");
         Matcher m = p.matcher(word);
-        if (m.matches()){
-            writeWords(word.concat(" ").concat(lines[count+1]));
+        if (m.matches() && count+1 < lines.length){
+            writeWords(word.concat(" ").concat(lines[count + 1]));
             count++;
             return;
         }
@@ -70,6 +70,10 @@ class Reader {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public File getFile() {
+        return file;
     }
 }
 

@@ -12,6 +12,7 @@ class TextFrame extends JFrame {
     private TextFrame(){
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setTitle("FastReader");
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JPanel panel = new TextPanel();
@@ -20,6 +21,7 @@ class TextFrame extends JFrame {
 
     public static void main(String []args){
         JFrame frame = new TextFrame();
+
         frame.setVisible(true);
     }
 

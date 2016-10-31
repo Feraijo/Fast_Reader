@@ -63,6 +63,11 @@ class TextPanel extends JPanel implements ActionListener {
             }
             words = rdr.getWords();
         } else if(e.getSource() == goButton) { //Начало чтения выбранного файла при нажатии кнопки Play
+            if (rdr.getFile() == null) {
+                JOptionPane.showMessageDialog(this, "You should choose the file to read from!"
+                        , "Oops!", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
             //Таймер, выполняющий действие через определённую задержку
             if (!isPause) {
                 timer.start();
