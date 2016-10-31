@@ -9,22 +9,22 @@ import java.util.regex.Pattern;
  * Created by Feraijo on 25.10.2016.
  */
 
-class Reader {
-    private static Reader instance;
+class TextReader {
+    private static TextReader instance;
     private List<String> words;
     private int speed = 300;
     private File file;
     private int count;
     private String[] lines;
 
-    static Reader getInstance(){
+    static TextReader getInstance(){
         if (instance == null)
-            instance = new Reader();
+            instance = new TextReader();
+
         return instance;
     }
 
     List<String> getWords(){
-        //setFile(new File("try.txt"));//
         try (BufferedReader reader = new BufferedReader
                 (new InputStreamReader(new FileInputStream(file), "Cp1251"))){
             words = new ArrayList<>();

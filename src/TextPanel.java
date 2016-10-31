@@ -3,6 +3,7 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -17,13 +18,14 @@ class TextPanel extends JPanel implements ActionListener {
     private JComboBox<Integer> speedList;
     private JTextField textField;
 
-    private Reader rdr = Reader.getInstance();
+    private TextReader rdr = TextReader.getInstance();
     private boolean isPause = false;
     private final Timer timer = new Timer(rdr.getDelay(), getAction());
     private int mainCount = 0;
     private List<String> words;
 
     TextPanel(){
+        rdr.setFile(new File("try.txt"));words = rdr.getWords(); // Заглушка для тестов
         setLayout(new BorderLayout());
         fc = new JFileChooser();
 
@@ -37,7 +39,7 @@ class TextPanel extends JPanel implements ActionListener {
         textField.setFont(bigFont);
         textField.setEditable(false);
         textField.setHorizontalAlignment(JTextField.CENTER);
-        textField.setPreferredSize(new Dimension(400, 100));
+        textField.setSize(new Dimension(100, 20));
 
         goButton = new JButton("Play");
         goButton.addActionListener(this);
@@ -99,5 +101,20 @@ class TextPanel extends JPanel implements ActionListener {
                 setCurrentDelay(words.get(mainCount+1));
             textField.setText(words.get(mainCount++));
         };
+    }
+
+    private static void createAndShowGUI() {
+        JFrame frame = new JFrame("FastReader");
+        frame.setSize(800, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.add(new TextPanel());
+
+        //frame.pack();
+        frame.setVisible(true);
+    }
+
+    public static void main(String []args){
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 }
