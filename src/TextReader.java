@@ -57,8 +57,8 @@ class TextReader {
             return;
         }
         if ((float) word.length() / 6 >= 2f) {
-            words.add(word.substring(0, 7).concat("-"));
-            writeWords(("-").concat(word.substring(7)));
+            words.add(word.substring(0, 8).concat("-"));
+            writeWords(("-").concat(word.substring(8)));
         } else {
             words.add(word);
         }
