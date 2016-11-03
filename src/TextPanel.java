@@ -1,17 +1,14 @@
-
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.util.List;
 
 /**
- * Класс, отвечающий за окно
+ * Класс, отвечающий за главное окно
  * Created by Feraijo on 24.10.2016.
  */
 
@@ -20,8 +17,7 @@ class TextPanel extends JPanel implements ActionListener {
     private JButton goButton;
     private JButton selectFile;
     private JComboBox<Integer> speedList;
-    private JTextField centerTextField, leftTextField, rightTextField;
-    //private JPanel padding;
+    private JTextField[] textFields;
 
     private TextReader rdr = TextReader.getInstance();
     private boolean isPauseFlag = false;
@@ -29,43 +25,20 @@ class TextPanel extends JPanel implements ActionListener {
     private int mainCount = 0;
     private List<String> words;
     private Font bigFont = new Font("SansSerif", Font.BOLD, 40);
-    private AffineTransform affinetransform = new AffineTransform();
-    private FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
     private Border nothing = BorderFactory.createEmptyBorder();
-    private Border lineBorder = BorderFactory.createLineBorder(Color.black); //emptyborder
-    private JPanel MainPanel;
+    //private Border lineBorder = BorderFactory.createLineBorder(Color.black); //emptyborder
 
-    TextPanel() {
-        rdr.setFile(new File("try.txt")); words = rdr.getWords(); // Заглушка для тестов
+    TextPanel(LayoutManager layout) {
+        super(layout);
+        rdr.setFile(new File("try.txt"));
+        words = rdr.getWords(); // Заглушка для тестов
 
-        setLayout(new BorderLayout());
         fc = new JFileChooser();
-
-        Integer[] speedVariants = {150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700};
-        speedList = new JComboBox<>(speedVariants);
-        speedList.setSelectedIndex(3);
-        speedList.addActionListener(this);
         JLabel speedLabel = new JLabel("Speed, wpm : ");
-        speedLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        centerTextField = new JTextField();
-        leftTextField = new JTextField();
-        rightTextField = new JTextField();
-        setTextField(centerTextField);
-        setTextField(leftTextField);
-        setTextField(rightTextField);
+        setSpeed(speedLabel);
 
-        GridBagConstraints c = new GridBagConstraints();
-        centerTextField.setHorizontalAlignment(SwingConstants.LEFT);
-        leftTextField.setHorizontalAlignment(SwingConstants.RIGHT);
-        rightTextField.setHorizontalAlignment(SwingConstants.LEFT);
-        //centerTextField.setAlignmentX(CENTER_ALIGNMENT);
-        //centerTextField.setAlignmentY(CENTER_ALIGNMENT);
-        //centerTextField.setPreferredSize(new Dimension(20, 20));
-        centerTextField.setMaximumSize(new Dimension(60, 200));
-        //centerTextField.setBounds(100, 100, 20, 20);
-        centerTextField.setForeground(new Color(110, 140, 0));
-
+        setTextFields();
 
         goButton = new JButton("Play");
         goButton.addActionListener(this);
@@ -74,40 +47,45 @@ class TextPanel extends JPanel implements ActionListener {
 
         JPanel buttonPanel = new JPanel();
         JPanel textPanel = new JPanel();
+
         textPanel.setLayout(new GridBagLayout());
         buttonPanel.setLayout(new GridLayout());
 
-        //c.anchor = GridBagConstraints.LINE_END;
-        c.gridx = 0;
-        textPanel.add(leftTextField, c);
-
-        //c.weightx = 1.0;
-        //c.anchor = GridBagConstraints.LINE_START;
-        c.gridx = 2;
-        textPanel.add(rightTextField, c);
-        //c.weightx = 0.5;
-        c.gridx = 1;
-
-        textPanel.add(centerTextField, c);
+        for (int i = 0; i<textFields.length; i++){
+            textPanel.add(textFields[i]);
+        }
 
         buttonPanel.add(speedLabel);
         buttonPanel.add(speedList);
         buttonPanel.add(selectFile);
         buttonPanel.add(goButton);
 
-        //add(padding, BorderLayout.LINE_START);
-        add(textPanel, BorderLayout.NORTH);
+        add(textPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
-
-
     }
 
-    private void setTextField(JTextField tf) {
+    private void setTextFields(){
+        textFields = new JTextField[3];
+        for (int i = 0; i<textFields.length; i++){
+            textFields[i] = new JTextField(7);
+            textFields[i].setFont(bigFont);
+            textFields[i].setEditable(false);
+            textFields[i].setSize(new Dimension(100, 100));
+            textFields[i].setBorder(nothing);
+        }
+        textFields[0].setHorizontalAlignment(SwingConstants.RIGHT);
+        textFields[1].setHorizontalAlignment(SwingConstants.CENTER);
+        textFields[1].setForeground(new Color(110, 160, 0));
+        textFields[1].setColumns(0);
+        textFields[2].setHorizontalAlignment(SwingConstants.LEFT);
+    }
 
-        tf.setFont(bigFont);
-        tf.setEditable(false);
-        tf.setSize(new Dimension(100, 20));
-        tf.setBorder(lineBorder);
+    private void setSpeed(JLabel speedLabel) {
+        Integer[] speedVariants = {150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700};
+        speedList = new JComboBox<>(speedVariants);
+        speedList.setSelectedIndex(3);
+        speedList.addActionListener(this);
+        speedLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     }
 
     @Override
@@ -149,10 +127,9 @@ class TextPanel extends JPanel implements ActionListener {
             if (!(mainCount + 1 >= words.size()))
                 setCurrentDelay(words.get(mainCount + 1));
             String[] word = getWordParts(words.get(mainCount++));
-
-            leftTextField.setText(word[0]);
-            centerTextField.setText(word[1]);
-            rightTextField.setText(word[2]);
+            for (int i = 0; i<textFields.length; i++){
+                textFields[i].setText(word[i]);
+            }
             this.revalidate();
         };
     }
@@ -166,18 +143,6 @@ class TextPanel extends JPanel implements ActionListener {
         return result;
     }
 
-    private int getDelta(String word) {
-
-        String centralLetter, subWord;
-        int wordCenterIndex = (int) (word.length() * 0.34);
-        int i = word.indexOf(word.charAt(wordCenterIndex));
-
-        centralLetter = word.substring(i, i + 1);
-        int centralLetterWidth = (int) bigFont.getStringBounds(centralLetter, frc).getWidth();
-        subWord = word.substring(0, i + 1);
-        return (int) bigFont.getStringBounds(subWord, frc).getWidth();
-    }
-
     private void setCurrentDelay(String word) { //метод для динамического регулирования задержки при знаках препинания
         if (word.isEmpty())
             return;
@@ -189,40 +154,16 @@ class TextPanel extends JPanel implements ActionListener {
 
     private static void createAndShowGUI() {
         JFrame frame = new JFrame("FastReader");
-        frame.setSize(500, 200);
+        frame.setPreferredSize(new Dimension(800, 400));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.add(new TextPanel());
+        frame.add(new TextPanel(new BorderLayout()));
+        frame.pack();
         frame.setVisible(true);
+
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> createAndShowGUI());
-    }
-
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
-    }
-
-    /**
-     * Method generated by IntelliJ IDEA GUI Designer
-     * >>> IMPORTANT!! <<<
-     * DO NOT edit this method OR call it in your code!
-     *
-     * @noinspection ALL
-     */
-    private void $$$setupUI$$$() {
-        MainPanel = new JPanel();
-        MainPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    public JComponent $$$getRootComponent$$$() {
-        return MainPanel;
     }
 }
