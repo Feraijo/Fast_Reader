@@ -24,7 +24,11 @@ class TextReader {
         return instance;
     }
 
-    List<String> getWords(){
+    List<String> getWholeBookText(){
+        return words;
+    }
+
+    void readFile(){
         try (BufferedReader reader = new BufferedReader
                 (new InputStreamReader(new FileInputStream(file), "Cp1251"))){
             words = new ArrayList<>();
@@ -35,10 +39,8 @@ class TextReader {
                     writeWords(lines[count]);
                 }
             }
-            return words;
         } catch(IOException e){
             e.printStackTrace();
-            return null;
         }
     }
 
@@ -51,6 +53,10 @@ class TextReader {
     private void writeWords(String word) {
         Pattern p = Pattern.compile("\\p{Punct}+");
         Matcher m = p.matcher(word);
+        if (word.equals("")) {
+            //count++;
+            return;
+        }
         if (m.matches() && count+1 < lines.length){
             writeWords(word.concat(" ").concat(lines[count + 1]));
             count++;
