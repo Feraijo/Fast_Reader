@@ -20,7 +20,6 @@ class TextReader {
     static TextReader getInstance(){
         if (instance == null)
             instance = new TextReader();
-
         return instance;
     }
 
@@ -78,8 +77,17 @@ class TextReader {
         this.file = file;
     }
 
-    public File getFile() {
-        return file;
+    File getFile() {
+
+        try {
+            return file;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void setWords(List<String> words) {
+        this.words = words;
     }
 }
 
