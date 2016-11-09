@@ -1,22 +1,25 @@
 import java.io.*;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Feraijo on 06.11.2016.
  */
 
 class SaveLoad implements Serializable {
-    private List<String> textToSave = TextReader.getInstance().getWholeBookText();
-    //private String fileName = TextReader.getInstance().getFile().getName();
+
+    private String fileName;
     private int loadedWordNumber;
 
 
-    void save(int wordNumberToSave) {
+    synchronized void save(int wordNumberToSave) {
         try {
+            ArrayList<String> textToSave = TextReader.getInstance().getWholeBookText();
+            //fileName = TextReader.getInstance().getFile().getName();
             FileOutputStream fileOutput = new FileOutputStream("resource/saves/text.saved");
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutput);
             outputStream.writeObject(textToSave);
             outputStream.writeInt(wordNumberToSave);
+            //outputStream.flush();
             outputStream.close();
             fileOutput.close();
         } catch (IOException e) {
@@ -24,12 +27,12 @@ class SaveLoad implements Serializable {
         }
     }
 
-    int load() {
+    synchronized int load() {
         try {
             FileInputStream fin = new FileInputStream("resource/saves/text.saved");
             ObjectInputStream inputStream = new ObjectInputStream(fin);
             try {
-                TextReader.getInstance().setWords((List<String>) inputStream.readObject());
+                TextReader.getInstance().setWholeBookText((ArrayList<String>) inputStream.readObject());
                 loadedWordNumber = inputStream.readInt();
             } catch (IOException e) {
                 e.printStackTrace();

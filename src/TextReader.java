@@ -23,8 +23,8 @@ class TextReader {
         return instance;
     }
 
-    List<String> getWholeBookText(){
-        return words;
+    ArrayList<String> getWholeBookText(){
+        return (ArrayList<String>) words;
     }
 
     void readFile(){
@@ -86,7 +86,7 @@ class TextReader {
         }
     }
 
-    public void setWords(List<String> words) {
+    public void setWholeBookText(ArrayList<String> words) {
         this.words = words;
     }
 }

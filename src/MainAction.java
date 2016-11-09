@@ -58,7 +58,7 @@ public class MainAction implements ActionListener {
         }
 
         if (e.getSource() == topButtons.getLoadButton()){
-            mainCount = saveLoad.load();
+            mainCount = saveLoad.load()-1;
             words = TextReader.getInstance().getWholeBookText();
         }
 
